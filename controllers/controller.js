@@ -44,31 +44,134 @@ exports.insertPerson = async (req, res) => {
 
 
 
-
 exports.updatePerson = async (req, res) => {
-    console.log("inserting person");
-    const { salutation, firstName, middleName, lastName, gender, birthDate, occupation, maritalStatusEnumId, employmentStatusEnumId } = req.body;
+    console.log("updating person");
+
+    const { partyId, salutation, firstName, middleName, lastName, gender, birthDate, occupation, maritalStatusEnumId, employmentStatusEnumId } = req.body;
+
     try {
-        // Insert a new person into the Person table
-        const insertQuery = `
-      INSERT INTO Person 
-        (salutation, firstName, middleName, lastName, gender, birthDate, occupation, maritalStatusEnumId, employmentStatusEnumId)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+        // Construct the dynamic part of the update query
+        const updateFields = [];
+        const values = [];
 
-        const values = [salutation, firstName, middleName, lastName, gender, birthDate, occupation, maritalStatusEnumId, employmentStatusEnumId];
+        if (salutation !== undefined) {
+            updateFields.push('salutation = ?');
+            values.push(salutation);
+        }
 
-        db.query(insertQuery, values, (error, results) => {
+        if (firstName !== undefined) {
+            updateFields.push('firstName = ?');
+            values.push(firstName);
+        }
+
+        if (middleName !== undefined) {
+            updateFields.push('middleName = ?');
+            values.push(middleName);
+        }
+
+        if (lastName !== undefined) {
+            updateFields.push('lastName = ?');
+            values.push(lastName);
+        }
+
+        if (gender !== undefined) {
+            updateFields.push('gender = ?');
+            values.push(gender);
+        }
+
+        if (birthDate !== undefined) {
+            updateFields.push('birthDate = ?');
+            values.push(birthDate);
+        }
+
+        if (occupation !== undefined) {
+            updateFields.push('occupation = ?');
+            values.push(occupation);
+        }
+
+        if (maritalStatusEnumId !== undefined) {
+            updateFields.push('maritalStatusEnumId = ?');
+            values.push(maritalStatusEnumId);
+        }
+
+        if (employmentStatusEnumId !== undefined) {
+            updateFields.push('employmentStatusEnumId = ?');
+            values.push(employmentStatusEnumId);
+        }
+
+        // Join the update fields into a comma-separated string
+        const updateFieldsString = updateFields.join(', ');
+
+
+        const updateQuery = `
+        UPDATE Person
+        SET
+          ${updateFieldsString}
+        WHERE partyId = ?
+      `;
+
+        // Add the partyId to the values array
+        values.push(partyId);
+
+        db.query(updateQuery, values, (error, results) => {
             if (error) {
-                console.error('Error inserting person: ' + error.message);
+                console.error('Error updating person: ' + error.message);
                 return res.status(500).json({ success: false, message: 'Internal Server Error' });
             }
 
-            console.log('Person inserted successfully');
-            res.status(201).json({ success: true, message: 'Person inserted successfully', insertedId: results.insertId });
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ success: false, message: 'Person not found' });
+            }
+
+            console.log('Person updated successfully');
+            res.status(200).json({ success: true, message: 'Person updated successfully' });
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
+
+exports.getPerson = async (req, res) => {
+    const partyId = req.params.partyId;
+
+    try {
+        let selectQuery;
+        let queryParams;
+
+        if (partyId) {
+            // Retrieve person data for a specific partyId
+            selectQuery = `
+          SELECT * FROM Person
+          WHERE partyId = ?
+        `;
+            queryParams = [partyId];
+        } else {
+            // Retrieve all person data
+            selectQuery = 'SELECT * FROM Person';
+            queryParams = [];
+        }
+
+        db.query(selectQuery, queryParams, (error, results) => {
+            if (error) {
+                console.error('Error getting person data: ' + error.message);
+                return res.status(500).json({ success: false, message: 'Internal Server Error' });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ success: false, message: 'No matching person data found' });
+            }
+
+            const personData = results;
+
+            console.log('Person data retrieved successfully');
+            res.status(200).json({ success: true, data: personData });
         });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
+
