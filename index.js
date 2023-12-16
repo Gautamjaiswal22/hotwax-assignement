@@ -7,8 +7,9 @@ const partyModel = require('./model/partyModel');
 const productModel = require('./model/productModel');
 const personModel = require('./model/personModel');
 const orderModel = require('./model/orderModel');
-const orderHeaderModel = require('./model/order_headerModel.js');
-
+const orderHeaderModel = require('./model/order_headerModel');
+const orderItem = require('./model/orderItem');
+const orderPart = require('./model/order_part');
 // Create and load tables
 db.query('CREATE DATABASE IF NOT EXISTS hotwax', (error, results) => {
     if (error) {
@@ -40,6 +41,8 @@ db.query('CREATE DATABASE IF NOT EXISTS hotwax', (error, results) => {
         // Create Order table
         orderModel.createOrderTable();
         orderHeaderModel.createOrderHeaderTable();
+        orderPart.createOrderPartTable();
+        orderItem.createOrderItemTable();
     });
 });
 

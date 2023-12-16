@@ -9,21 +9,27 @@ function createOrderPartTable() {
 
         if (results.length === 0) {
             // order_part table doesn't exist, create it
+            //                 ORDER_ID VARCHAR(40) NOT NULL,
+            //                 FOREIGN KEY (CUSTOMER_PARTY_ID) REFERENCES party(PARTY_ID)
             db.query(`
-                CREATE TABLE order_part (
-                    ORDER_ID VARCHAR(40) NOT NULL,
-                    ORDER_PART_SEQ_ID VARCHAR(40) NOT NULL,
-                    PART_NAME VARCHAR(255) DEFAULT NULL,
-                    STATUS_ID VARCHAR(40) DEFAULT NULL,
-                    VENDOR_PARTY_ID VARCHAR(40) DEFAULT NULL,
-                    CUSTOMER_PARTY_ID VARCHAR(40) DEFAULT NULL,
-                    PART_TOTAL DECIMAL(24,4) DEFAULT NULL,
-                    FACILITY_ID VARCHAR(40) DEFAULT NULL,
-                    SHIPMENT_METHOD_ENUM_ID VARCHAR(40) DEFAULT NULL,
-                    PRIMARY KEY (ORDER_ID, ORDER_PART_SEQ_ID),
-                    FOREIGN KEY (ORDER_ID) REFERENCES order_header(ORDER_ID),
-                    FOREIGN KEY (CUSTOMER_PARTY_ID) REFERENCES party(PARTY_ID)
-                )
+            CREATE TABLE order_part (
+                ORDER_ID VARCHAR(40) NOT NULL,
+                ORDER_PART_SEQ_ID VARCHAR(40) NOT NULL,
+                PART_NAME VARCHAR(255) DEFAULT NULL,
+                STATUS_ID VARCHAR(40) DEFAULT NULL,
+                VENDOR_PARTY_ID INT DEFAULT NULL,
+                CUSTOMER_PARTY_ID VARCHAR(40) DEFAULT NULL,
+                PART_TOTAL DECIMAL(24,4) DEFAULT NULL,
+                FACILITY_ID VARCHAR(40) DEFAULT NULL,
+                SHIPMENT_METHOD_ENUM_ID VARCHAR(40) DEFAULT NULL,
+                PRIMARY KEY (ORDER_ID, ORDER_PART_SEQ_ID),
+                FOREIGN KEY (ORDER_ID) REFERENCES order_header(ORDER_ID)
+                FOREIGN KEY (CUSTOMER_PARTY_ID) REFERENCES Party(partyId)
+
+                
+            )
+
+            
             `, (error, results) => {
                 if (error) {
                     console.error('Error creating order_part table:', error.message);
