@@ -175,3 +175,52 @@ exports.getPerson = async (req, res) => {
     }
 };
 
+
+
+exports.insertOrder = async (req, res) => {
+    try {
+        const { orderName, currencyUomId, salesChannelEnumId, statusId, productStoreId, placedDate, approvedDate } = req.body;
+
+        // Set default values for currencyUomId and statusId
+        const defaultCurrencyUomId = currencyUomId || 'USD';
+        const defaultStatusId = statusId || 'OrderPlaced';
+
+        const insertQuery = `
+            INSERT INTO \`Order\` (
+                orderName,
+                currencyUomId,
+                salesChannelEnumId,
+                statusId,
+                productStoreId,
+                placedDate,
+                approvedDate
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        // Only include parameters in the values array if they are not null
+        const values = [
+            orderName,
+            currencyUomId !== null ? currencyUomId : defaultCurrencyUomId,
+            salesChannelEnumId,
+            statusId !== null ? statusId : defaultStatusId,
+            productStoreId,
+            placedDate,
+            approvedDate
+        ];
+
+        db.query(insertQuery, values, (error, results) => {
+            if (error) {
+                console.error('Error creating order:', error.message);
+                return res.status(500).json({ success: false, message: 'Internal Server Error' });
+            }
+            const orderId = results.insertId; // Get the auto-generated orderId
+            console.log('Order created successfully');
+            res.status(200).json({ success: true, data: "Order inserted successfully", order_Id: orderId });
+        });
+    } catch (error) {
+        console.error('Error inserting order:', error.message);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
+
