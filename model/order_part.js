@@ -18,15 +18,12 @@ function createOrderPartTable() {
                 PART_NAME VARCHAR(255) DEFAULT NULL,
                 STATUS_ID VARCHAR(40) DEFAULT NULL,
                 VENDOR_PARTY_ID INT DEFAULT NULL,
-                CUSTOMER_PARTY_ID VARCHAR(40) DEFAULT NULL,
+                CUSTOMER_PARTY_ID INT DEFAULT NULL,
                 PART_TOTAL DECIMAL(24,4) DEFAULT NULL,
                 FACILITY_ID VARCHAR(40) DEFAULT NULL,
                 SHIPMENT_METHOD_ENUM_ID VARCHAR(40) DEFAULT NULL,
                 PRIMARY KEY (ORDER_ID, ORDER_PART_SEQ_ID),
                 FOREIGN KEY (ORDER_ID) REFERENCES order_header(ORDER_ID)
-                FOREIGN KEY (CUSTOMER_PARTY_ID) REFERENCES Party(partyId)
-
-                
             )
 
             
