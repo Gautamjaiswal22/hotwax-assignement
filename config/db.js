@@ -44,7 +44,7 @@ connection.connect((err) => {
     connection.query('SHOW TABLES LIKE "Party"', (error, results) => {
         if (error) {
             console.error('Error checking if Party table exists: ' + error.message);
-            return connection.end();
+            // return connection.end();
         }
 
         if (results.length === 0) {
@@ -93,7 +93,7 @@ connection.connect((err) => {
     connection.query('SHOW TABLES LIKE "Product"', (error, results) => {
         if (error) {
             console.error('Error checking if Product table exists: ' + error.message);
-            return connection.end();
+            // return connection.end();
         }
 
         if (results.length === 0) {
@@ -149,7 +149,7 @@ connection.connect((err) => {
     connection.query('SHOW TABLES LIKE "Person"', (error, results) => {
         if (error) {
             console.error('Error checking if Person table exists: ' + error.message);
-            return connection.end();
+            // return connection.end();
         }
 
         if (results.length === 0) {
@@ -173,11 +173,11 @@ connection.connect((err) => {
                 } else {
                     console.log('Person table created successfully');
                 }
-                connection.end();
+                // connection.end();
             });
         } else {
             console.log('Person table already exists');
-            connection.end();
+            // connection.end();
         }
     });
 });
